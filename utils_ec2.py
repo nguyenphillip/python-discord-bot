@@ -62,7 +62,6 @@ def stop_ec2(instances):
 
 def restart_ec2(instances):
     stop_ec2(instances)
-    sleep(10)
     start_ec2(instances)
 
 def status_ec2(instances):
@@ -72,7 +71,7 @@ def status_ec2(instances):
         print(fstr)
         return_strs.append(fstr)
 
-    return return_strs
+    return instances
 
 
 if __name__ == "__main__":
