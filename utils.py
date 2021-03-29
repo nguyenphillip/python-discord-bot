@@ -4,7 +4,13 @@ import time
 
 ec2 = boto3.resource(
     'ec2',
-    region_name='us-east-2',
+    region_name=os.getenv('AWS_REGION'),
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_KEY'))
+
+r53 = boto3.client(
+    'route53',
+    region_name=os.getenv('AWS_REGION'),
     aws_access_key_id=os.getenv('AWS_ACCESS_KEY'),
     aws_secret_access_key=os.getenv('AWS_SECRET_KEY'))
 
@@ -64,20 +70,40 @@ def restart_ec2(instances):
     stop_ec2(instances)
     start_ec2(instances)
 
-def status_ec2(instances):
+def status_ec2(instances, records):
     return_strs = []
     for instance in instances:
-        fstr = f'{instance.id} \nIP: {instance.public_ip_address} \nSTATUS: {instance.state["Name"]}'
+        server = get_r53_dns_name(records, instance.public_ip_address)
+        fstr = f'{instance.id} \nSERVER: {server} \nIP: {instance.public_ip_address} \nSTATUS: {instance.state["Name"]}'
         print(fstr)
         return_strs.append(fstr)
 
-    return instances
+
+def list_r53_a_records():
+    records = r53.list_resource_record_sets(
+        HostedZoneId=os.getenv('AWS_HOSTED_ZONE_ID'),
+    )
+
+    return records
+
+def get_r53_dns_name(records, ip_addr):
+    if ip_addr:
+        for record in records['ResourceRecordSets']:
+            for res in record['ResourceRecords']:
+                if ip_addr == res['Value']:
+                    #print (f'Server: {record["Name"]}')
+                    return record['Name'][:-1]
+
+    return None
+
 
 
 if __name__ == "__main__":
     instances, num = check_ec2_instances()
+    records = list_r53_a_records()
 
     if num == 0:
         instances = create_ec2()
     
-    status_ec2(instances)
+    status_ec2(instances, records)
+
