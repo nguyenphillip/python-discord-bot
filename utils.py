@@ -12,7 +12,21 @@ sudo git clone https://github.com/Nimdy/Dedicated_Valheim_Server_Script.git
 cd Dedicated_Valheim_Server_Script
 sudo chmod +x njordmenu.sh
 
-echo -e "3\n1\n<PASSWORD>\n<SERVER>\n<SERVER>\n0\n<PASSWORD>\n0\n0\n0" | ./njordmenu.sh
+input=$(cat <<-END
+3
+1
+<PASSWORD>
+<SERVER>
+<SERVER>
+0
+<PASSWORD>
+0
+0
+0
+END
+)
+
+echo "$input" | ./njordmenu.sh
 '''
 
 ec2 = boto3.resource(

@@ -18,7 +18,7 @@ async def valheim(ctx):
 
 @valheim.command()
 async def help(ctx):
-    await ctx.send('help: !valheim start/stop/restart/status\n!valheim create <world_name> [password]\nNote: ')
+    await ctx.send('help: !valheim start/stop/restart/status\n!valheim create <world_name> [password]\nNote: default password=Test123 (needs to have 1 upper, lower, and 6 or more characters)')
 
 @valheim.command()
 async def create(ctx, name, password='Test123'):
