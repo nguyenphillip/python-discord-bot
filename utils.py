@@ -21,7 +21,7 @@ def get_ec2_instances(guild_id, game):
     instances = ec2.instances.filter(
         Filters=[
             {'Name': 'tag:game', 'Values': [game]},
-            {'Name': 'tag:guild_id', 'Values': [guild_id]},
+            {'Name': 'tag:guild_id', 'Values': [str(guild_id)]},
             {'Name': 'instance-state-name', 'Values': ['running', 'stopping','stopped']}
         ]
     )
