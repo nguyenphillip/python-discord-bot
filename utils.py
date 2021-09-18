@@ -66,7 +66,10 @@ def create_game(guild_id, game, name):
     instances, num = get_ec2_instances(guild_id, game)
 
     if num < MAX_INSTANCES:
-        create_ec2(guild_id, game, hostname)
+        return create_ec2(guild_id, game, hostname)
+    
+    return None
+    
 
 def start_ec2(guild_id, game):
     instances, num = get_ec2_instances(guild_id, game)
