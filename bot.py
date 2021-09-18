@@ -18,15 +18,16 @@ async def valheim(ctx):
 
 @valheim.command()
 async def help(ctx):
-    await ctx.send('help: !valheim start/stop/restart/status')
+    await ctx.send('help: !valheim start/stop/restart/status\n!valheim create <world_name> [password]\nNote: ')
 
 @valheim.command()
-async def create(ctx, name):
-    await ctx.send('creating server... this may take a few moments...')
-    instances = utils.create_game(ctx.guild.id, game, name)
-    await asyncio.sleep(30)
+async def create(ctx, name, password='Test123'):
+    await ctx.send('creating server... this may take a few minutes...')
+    instances = utils.create_game(ctx.guild.id, game, name, password)
     if not instances:
         await ctx.send('server already created')
+        await ctx.invoke(bot.get_command('valheim status'))
+    await asyncio.sleep(120)
     await ctx.invoke(bot.get_command('valheim status'))
 
 @valheim.command()

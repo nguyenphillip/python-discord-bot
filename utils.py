@@ -4,6 +4,17 @@ import time
 
 MAX_INSTANCES=1
 
+USER_DATA='''#!/bin/sh
+
+sudo apt install -y git net-tools awscli
+cd /opt
+sudo git clone https://github.com/Nimdy/Dedicated_Valheim_Server_Script.git
+cd Dedicated_Valheim_Server_Script
+sudo chmod +x njordmenu.sh
+
+echo -e "3\n1\n<PASSWORD>\n<SERVER>\n<SERVER>\n0\n<PASSWORD>\n0\n0\n0" | ./njordmenu.sh
+'''
+
 ec2 = boto3.resource(
     'ec2',
     region_name=os.getenv('AWS_REGION'),
@@ -33,9 +44,9 @@ def get_ec2_instances(guild_id, game):
     return instances, num
 
 
-def create_ec2(guild_id, game, hostname):
+def create_ec2(guild_id, game, hostname, name, password):
     instances = ec2.create_instances(
-        ImageId='ami-00dfe2c7ce89a450b', 
+        ImageId='ami-00399ec92321828f5', 
         InstanceType='t3.medium',
         MinCount=1, 
         MaxCount=1,
@@ -51,22 +62,23 @@ def create_ec2(guild_id, game, hostname):
                     {'Key': 'hostname', 'Value': hostname},
                 ]
             }
-        ]
+        ],
+        UserData=USER_DATA.replace('<PASSWORD>', password).replace('<SERVER>', name)
     )
     print (f'created: {instances}')
     for instance in instances:
         instance.wait_until_running()
     return instances
 
-def create_game(guild_id, game, name):
+def create_game(guild_id, game, name, password):
     
     hostname = name[:10] if  len(name) > 10 else name
-    hostname = f"{name.lower()}.{game.lower()}.flippn.net"
+    hostname = f"{name.lower().replace(' ', '-')}.{game.lower()}.flippn.net"
 
     instances, num = get_ec2_instances(guild_id, game)
 
     if num < MAX_INSTANCES:
-        return create_ec2(guild_id, game, hostname)
+        return create_ec2(guild_id, game, hostname, name, password)
     
     return None
     
