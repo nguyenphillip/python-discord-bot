@@ -45,8 +45,9 @@ def create_ec2(guild_id, game, hostname):
             {
                 'ResourceType': 'instance',
                 'Tags': [
+                    {'Key': 'Name', 'Value': hostname},
                     {'Key': 'game', 'Value': game},
-                    {'Key': 'guild_id', 'Value': guild_id},
+                    {'Key': 'guild_id', 'Value': str(guild_id)},
                     {'Key': 'hostname', 'Value': hostname},
                 ]
             }
@@ -97,8 +98,8 @@ def status_ec2(guild_id, game):
 
 
 def get_r53_dns_name(ip_addr):
-    records = list_r53_a_records
-    if ip_addr:
+    records = list_r53_a_records()
+    if ip_addr and records:
         for record in records['ResourceRecordSets']:
             for res in record['ResourceRecords']:
                 if ip_addr == res['Value']:
