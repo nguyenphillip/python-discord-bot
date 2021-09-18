@@ -35,7 +35,7 @@ def get_ec2_instances(guild_id, game):
 
 def create_ec2(guild_id, game, hostname):
     instances = ec2.create_instances(
-        ImageId='ami-08962a4068733a2b6', 
+        ImageId='ami-00dfe2c7ce89a450b', 
         InstanceType='t3.medium',
         MinCount=1, 
         MaxCount=1,
