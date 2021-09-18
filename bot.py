@@ -50,7 +50,7 @@ async def restart(ctx):
 @valheim.command()
 async def status(ctx):
     await ctx.send('checking status...')
-    instances, num = utils.check_ec2_instances()
+    instances, num = utils.get_ec2_instances()
  
     if num == 0:
         await ctx.send('No EC2 instances found.')
